@@ -11,14 +11,15 @@ var baseConfig = {
     publicPath: '/dist/',
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.js$/,
         use: [{
           loader: 'babel-loader',
           options: {
-            "presets": [ [ "es2015" ] ],
-            "plugins": [ "transform-es2015-destructuring", "transform-runtime" ]
+            "presets": [
+              ["es2015"]
+            ],
+            "plugins": ["transform-es2015-destructuring", "transform-runtime"]
           }
         }],
         exclude: /node_modules/
@@ -60,16 +61,15 @@ var baseConfig = {
   }
 };
 
-let targets = [ 'web', 'node' ].map((target) => {
+let targets = ['web', 'node'].map((target) => {
   let obj = webpackMerge(baseConfig, {
     target: target,
     entry: {
-      app: target === 'web'
-        ? process.env.NODE_ENV === 'development'
-          ? [ `./src/${target}.entry.js`, 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000' ]
-          : [ `./src/${target}.entry.js` ]
-        : [ `./src/${target}.entry.js` ]
-      ,
+      app: target === 'web' ?
+        process.env.NODE_ENV === 'development' ?
+        [`./src/${target}.entry.js`, 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'] :
+        [`./src/${target}.entry.js`] :
+        [`./src/${target}.entry.js`],
     },
     output: {
       filename: `${target}.bundle.js`,
@@ -80,25 +80,24 @@ let targets = [ 'web', 'node' ].map((target) => {
 
       ]
     },
-    plugins: target === 'web'
-      ? process.env.NODE_ENV === 'development'
-        ? [
-            new webpack.HotModuleReplacementPlugin(),
-            new ExtractTextPlugin("style.css")
-          ]
-        : [
-            new webpack.DefinePlugin({ 'process.env': { NODE_ENV: '"production"' } }),
-            new webpack.optimize.UglifyJsPlugin({ sourceMap: true, compress: { warnings: false } }),
-            new webpack.LoaderOptionsPlugin({ minimize: true }),
-            new ExtractTextPlugin("style.css")
-          ]
-      : []
-    ,
-    devtool: target === 'web'
-      ? process.env.NODE_ENV === 'development'
-        ? '#eval-source-map'
-        : '#source-map'
-      : false
+    plugins: target === 'web' ?
+      process.env.NODE_ENV === 'development' ?
+      [
+        new webpack.HotModuleReplacementPlugin(),
+        new ExtractTextPlugin("style.css")
+      ] :
+      [
+        new webpack.DefinePlugin({ 'process.env': { NODE_ENV: '"production"' } }),
+        // new webpack.optimize.UglifyJsPlugin({ sourceMap: true, compress: { warnings: false } }),
+        new webpack.LoaderOptionsPlugin({ minimize: true }),
+        new ExtractTextPlugin("style.css")
+      ] :
+      [],
+    devtool: target === 'web' ?
+      process.env.NODE_ENV === 'development' ?
+      '#eval-source-map' :
+      '#source-map' :
+      false
   });
   if (process.env.NODE_ENV === 'development' && target === 'web') {
     obj.module.rules[0].use.push({ loader: 'webpack-module-hot-accept' });
