@@ -12,9 +12,9 @@ const serialize = require('serialize-javascript');
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 let events = [
-  { description: 'Random event 1', date: moment('2018-03-01', 'YYYY-MM-DD') },
-  { description: 'Random event 2', date: moment('2018-03-07', 'YYYY-MM-DD') },
-  { description: 'Random event 3', date: moment() }
+  { description: 'Random event 1', date: moment() },
+  { description: 'Random event 2', date: moment().add(3, 'days') },
+  { description: 'Random event 3', date: moment().add(20, 'days') }
 ];
 
 let renderer;
